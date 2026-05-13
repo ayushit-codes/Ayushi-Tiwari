@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURUM — Artisan Pendants</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Tenor+Sans&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a96e;
+    --gold-light: #e8d5a3;
+    --gold-dark: #9a7540;
+    --black: #0a0906;
+    --cream: #f5f0e8;
+    --warm-grey: #2a2520;
+    --text-muted: #8a7d6e;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'Tenor Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.18s ease;
+    opacity: 0.6;
+  }
+  body:hover .cursor-ring { opacity: 1; }
+
+  /* Navigation */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 28px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(10,9,6,0.95), transparent);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .logo span { font-style: italic; color: var(--gold-light); }
+
+  .nav-links {
+    display: flex;
+    gap: 48px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--cream);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    transition: opacity 0.3s, color 0.3s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold-light); }
+
+  .nav-cart {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--cream);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    cursor: none;
+    background: none;
+    border: none;
+    transition: opacity 0.3s;
+  }
+  .nav-cart:hover { opacity: 1; }
+  .cart-count {
+    width: 18px; height: 18px;
+    background: var(--gold);
+    color: var(--black);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+  }
+
+  /* Hero */
+  .hero {
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 50%, rgba(201,169,110,0.12) 0%, transparent 65%),
+                radial-gradient(ellipse at 20% 80%, rgba(201,169,110,0.07) 0%, transparent 50%);
+  }
+
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 256px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 60px;
+    max-width: 700px;
+    animation: heroReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes heroReveal {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px; height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(60px, 9vw, 120px);
+    font-weight: 300;
+    line-height: 0.92;
+    margin-bottom: 32px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold-light);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+    color: var(--text-muted);
+    max-width: 420px;
+    margin-bottom: 48px;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 40px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.4s;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+    z-index: -1;
+  }
+  .btn-primary:hover { color: var(--black); }
+  .btn-primary:hover::after { transform: scaleX(1); }
+
+  .btn-arrow {
+    font-size: 16px;
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover .btn-arrow { transform: translateX(6px); }
+
+  /* Floating pendant decorations */
+  .hero-deco {
+    position: absolute;
+    right: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 340px;
+    height: 340px;
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(-50%) translateY(0px); }
+    50% { transform: translateY(-50%) translateY(-20px); }
+  }
+
+  .hero-deco svg { width: 100%; height: 100%; }
+
+  /* Marquee */
+  .marquee-wrap {
+    border-top: 1px solid rgba(201,169,110,0.2);
+    border-bottom: 1px solid rgba(201,169,110,0.2);
+    padding: 18px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    background: rgba(201,169,110,0.03);
+  }
+  .marquee-track {
+    display: inline-flex;
+    animation: marquee 20s linear infinite;
+  }
+  .marquee-item {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 48px;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+  }
+  .marquee-dot {
+    width: 4px; height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* Products Section */
+  .products {
+    padding: 120px 60px;
+  }
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 80px;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 300;
+    line-height: 1;
+  }
+  .section-title em { font-style: italic; color: var(--gold-light); }
+
+  .view-all {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: color 0.3s;
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
+    cursor: none;
+  }
+  .view-all:hover { color: var(--gold); border-color: var(--gold); }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+
+  .product-card {
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  .product-card:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+
+  .product-img {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--warm-grey);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .product-card:nth-child(1) .product-img { aspect-ratio: 1; }
+
+  .product-card:hover .product-img { transform: scale(1.04); }
+
+  /* SVG pendant illustrations */
+  .pendant-art {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,9,6,0.9) 0%, rgba(10,9,6,0.2) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 28px;
+  }
+  .product-card:hover .product-overlay { opacity: 1; }
+
+  .product-info {
+    padding: 20px 0;
+  }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .product-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .product-material {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .product-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--gold);
+  }
+
+  .add-to-cart {
+    width: 100%;
+    padding: 12px;
+    background: var(--gold);
+    border: none;
+    color: var(--black);
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.3s;
+    margin-top: 12px;
+  }
+  .add-to-cart:hover { background: var(--gold-light); }
+
+  /* Badge */
+  .product-badge {
+    position: absolute;
+    top: 16px; right: 16px;
+    z-index: 3;
+    background: var(--gold);
+    color: var(--black);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+  }
+
+  /* Story section */
+  .story {
+    padding: 120px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 120px;
+    align-items: center;
+    border-top: 1px solid rgba(201,169,110,0.12);
+  }
+
+  .story-visual {
+    position: relative;
+    height: 560px;
+  }
+
+  .story-img-main {
+    position: absolute;
+    width: 75%;
+    height: 80%;
+    background: var(--warm-grey);
+    right: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .story-img-accent {
+    position: absolute;
+    width: 45%;
+    height: 50%;
+    background: rgba(201,169,110,0.08);
+    border: 1px solid rgba(201,169,110,0.3);
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .story-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 140px;
+    font-weight: 300;
+    color: rgba(201,169,110,0.08);
+    line-height: 1;
+    position: absolute;
+    bottom: 10%;
+    left: -20px;
+  }
+
+  .story-text .section-label { margin-bottom: 16px; }
+  .story-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 28px;
+  }
+  .story-title em { font-style: italic; color: var(--gold-light); }
+  .story-body {
+    font-size: 14px;
+    line-height: 2;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+  }
+
+  .story-stats {
+    display: flex;
+    gap: 48px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(201,169,110,0.15);
+  }
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Materials */
+  .materials {
+    padding: 80px 60px;
+    background: rgba(201,169,110,0.04);
+    border-top: 1px solid rgba(201,169,110,0.12);
+    border-bottom: 1px solid rgba(201,169,110,0.12);
+  }
+  .materials-inner {
+    display: flex;
+    gap: 0;
+  }
+  .material-item {
+    flex: 1;
+    padding: 40px;
+    border-right: 1px solid rgba(201,169,110,0.12);
+    text-align: center;
+  }
+  .material-item:last-child { border-right: none; }
+  .material-icon {
+    width: 48px; height: 48px;
+    margin: 0 auto 20px;
+  }
+  .material-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 8px;
+  }
+  .material-desc {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* Testimonial */
+  .testimonial {
+    padding: 140px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .testimonial::before {
+    content: '❝';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 240px;
+    color: rgba(201,169,110,0.06);
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    line-height: 1;
+  }
+  .testimonial-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 4vw, 42px);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.4;
+    max-width: 780px;
+    margin: 0 auto 40px;
+    position: relative;
+  }
+  .testimonial-author {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .testimonial-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 40px;
+  }
+  .t-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(201,169,110,0.3);
+    border: none;
+    cursor: none;
+    transition: background 0.3s;
+  }
+  .t-dot.active { background: var(--gold); }
+
+  /* Newsletter */
+  .newsletter {
+    padding: 100px 60px;
+    background: var(--warm-grey);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .newsletter-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 300;
+    line-height: 1.1;
+  }
+  .newsletter-title em { font-style: italic; color: var(--gold-light); }
+  .newsletter-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-top: 16px;
+  }
+  .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .newsletter-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(201,169,110,0.4);
+    padding: 16px 0;
+    color: var(--cream);
+    font-family: 'Tenor Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .newsletter-input::placeholder { color: var(--text-muted); }
+  .newsletter-input:focus { border-color: var(--gold); }
+
+  /* Footer */
+  footer {
+    padding: 60px;
+    border-top: 1px solid rgba(201,169,110,0.12);
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+  }
+  .footer-brand .logo { display: block; margin-bottom: 20px; }
+  .footer-tagline {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 240px;
+  }
+  .footer-col h4 {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 12px; }
+  .footer-links a {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+    cursor: none;
+  }
+  .footer-links a:hover { color: var(--gold-light); }
+  .footer-bottom {
+    border-top: 1px solid rgba(201,169,110,0.1);
+    padding: 24px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-copy {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* Cart Drawer */
+  .cart-drawer {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 420px;
+    background: var(--warm-grey);
+    z-index: 200;
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+    border-left: 1px solid rgba(201,169,110,0.2);
+    display: flex;
+    flex-direction: column;
+  }
+  .cart-drawer.open { transform: translateX(0); }
+
+  .cart-header {
+    padding: 32px;
+    border-bottom: 1px solid rgba(201,169,110,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .cart-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+  }
+  .cart-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    cursor: none;
+    transition: color 0.3s;
+  }
+  .cart-close:hover { color: var(--cream); }
+
+  .cart-items { flex: 1; padding: 32px; overflow-y: auto; }
+  .cart-empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 60px 0;
+  }
+  .cart-empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    opacity: 0.3;
+  }
+
+  .cart-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(201,169,110,0.1);
+  }
+  .cart-item-img {
+    width: 80px; height: 80px;
+    background: var(--black);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cart-item-info { flex: 1; }
+  .cart-item-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+  .cart-item-sub {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .cart-item-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--gold);
+    margin-top: 8px;
+  }
+  .cart-item-remove {
+    background: none; border: none;
+    color: var(--text-muted); font-size: 12px;
+    cursor: none; transition: color 0.3s;
+    align-self: flex-start;
+    padding: 4px;
+  }
+  .cart-item-remove:hover { color: #e88; }
+
+  .cart-footer {
+    padding: 32px;
+    border-top: 1px solid rgba(201,169,110,0.15);
+  }
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .cart-total-label { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-muted); }
+  .cart-total-price { font-family: 'Cormorant Garamond', serif; font-size: 32px; color: var(--gold); }
+
+  .overlay-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,9,6,0.7);
+    z-index: 199;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .overlay-bg.active { opacity: 1; pointer-events: all; }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 24px; }
+    .hero-deco { display: none; }
+    .products { padding: 60px 24px; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .product-card:nth-child(1) { grid-column: span 2; }
+    .story { grid-template-columns: 1fr; padding: 60px 24px; gap: 60px; }
+    .story-visual { height: 300px; }
+    .newsletter { grid-template-columns: 1fr; padding: 60px 24px; gap: 40px; }
+    footer { grid-template-columns: 1fr 1fr; padding: 40px 24px; }
+    .footer-bottom { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
+    .cart-drawer { width: 100%; }
+    .materials-inner { flex-direction: column; }
+    .material-item { border-right: none; border-bottom: 1px solid rgba(201,169,110,0.12); }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="logo">AUR<span>UM</span></a>
+  <ul class="nav-links">
+    <li><a href="#collection">Collection</a></li>
+    <li><a href="#story">Atelier</a></li>
+    <li><a href="#materials">Materials</a></li>
+    <li><a href="#newsletter">Contact</a></li>
+  </ul>
+  <button class="nav-cart" onclick="toggleCart()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    Bag
+    <div class="cart-count" id="cartCount">0</div>
+  </button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Handcrafted Fine Jewellery</div>
+    <h1 class="hero-title">
+      Wear Your
+      <em>Story</em>
+    </h1>
+    <p class="hero-sub">Each pendant is a singular work of art — cast, chased, and polished by hand in our atelier. Precious metals meet ancient symbolism.</p>
+    <a href="#collection" class="btn-primary">
+      Explore Collection
+      <span class="btn-arrow">→</span>
+    </a>
+  </div>
+
+  <!-- Decorative pendant SVG -->
+  <div class="hero-deco">
+    <svg viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#c9a96e" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#c9a96e" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="blur1"><feGaussianBlur stdDeviation="8"/></filter>
+      </defs>
+      <circle cx="170" cy="170" r="140" fill="url(#glow)"/>
+      <!-- Pendant chain -->
+      <line x1="170" y1="0" x2="170" y2="90" stroke="#c9a96e" stroke-width="1.5" stroke-opacity="0.5"/>
+      <circle cx="170" cy="94" r="6" fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-opacity="0.7"/>
+      <!-- Main pendant shape - geometric sun -->
+      <g transform="translate(170, 195)">
+        <!-- Outer ring -->
+        <circle r="68" fill="none" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.4"/>
+        <circle r="55" fill="none" stroke="#c9a96e" stroke-width="0.5" stroke-opacity="0.25"/>
+        <!-- Star shape -->
+        <polygon points="0,-50 11.8,-36.2 45.1,-15.5 18.1,-1 27.5,47.6 0,28 -27.5,47.6 -18.1,-1 -45.1,-15.5 -11.8,-36.2"
+          fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-opacity="0.8"/>
+        <!-- Inner gem -->
+        <polygon points="0,-22 12.7,7 -12.7,7" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.9"/>
+        <polygon points="0,22 12.7,-7 -12.7,-7" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.9"/>
+        <circle r="8" fill="#c9a96e" opacity="0.6"/>
+        <!-- Decorative dots -->
+        <circle cx="0" cy="-68" r="2.5" fill="#c9a96e" opacity="0.7"/>
+        <circle cx="64.7" cy="-21" r="2.5" fill="#c9a96e" opacity="0.7"/>
+        <circle cx="40" cy="58" r="2.5" fill="#c9a96e" opacity="0.7"/>
+        <circle cx="-40" cy="58" r="2.5" fill="#c9a96e" opacity="0.7"/>
+        <circle cx="-64.7" cy="-21" r="2.5" fill="#c9a96e" opacity="0.7"/>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">18K Gold <span class="marquee-dot"></span> Sterling Silver <span class="marquee-dot"></span> Handcrafted <span class="marquee-dot"></span> Limited Edition <span class="marquee-dot"></span> Free Engraving <span class="marquee-dot"></span> Ethical Sourcing <span class="marquee-dot"></span></span>
+    <span class="marquee-item">18K Gold <span class="marquee-dot"></span> Sterling Silver <span class="marquee-dot"></span> Handcrafted <span class="marquee-dot"></span> Limited Edition <span class="marquee-dot"></span> Free Engraving <span class="marquee-dot"></span> Ethical Sourcing <span class="marquee-dot"></span></span>
+    <span class="marquee-item">18K Gold <span class="marquee-dot"></span> Sterling Silver <span class="marquee-dot"></span> Handcrafted <span class="marquee-dot"></span> Limited Edition <span class="marquee-dot"></span> Free Engraving <span class="marquee-dot"></span> Ethical Sourcing <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+<!-- Products -->
+<section class="products" id="collection">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-label">The Collection</div>
+      <h2 class="section-title">Singular <em>Pieces</em></h2>
+    </div>
+    <a href="#" class="view-all">View All <span>→</span></a>
+  </div>
+
+  <div class="products-grid">
+
+    <!-- Product 1 - Large featured -->
+    <div class="product-card reveal" data-name="Celestial Orbit" data-material="18K Gold · Diamond" data-price="2,840">
+      <div class="product-badge">New</div>
+      <div class="product-img">
+        <div class="pendant-art">
+          <svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="pg1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#c9a96e" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#c9a96e" stop-opacity="0.02"/>
+              </radialGradient>
+            </defs>
+            <circle cx="110" cy="110" r="100" fill="url(#pg1)"/>
+            <circle cx="110" cy="110" r="72" fill="none" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.4"/>
+            <circle cx="110" cy="110" r="48" fill="none" stroke="#c9a96e" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="4 8"/>
+            <circle cx="110" cy="110" r="24" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1.5"/>
+            <circle cx="110" cy="110" r="8" fill="#c9a96e" opacity="0.8"/>
+            <!-- Orbiting diamond -->
+            <ellipse cx="110" cy="110" rx="72" ry="30" fill="none" stroke="#c9a96e" stroke-width="0.75" stroke-opacity="0.5" transform="rotate(-30, 110, 110)"/>
+            <polygon points="110,38 116,52 130,52 119,61 123,75 110,66 97,75 101,61 90,52 104,52" fill="none" stroke="#e8d5a3" stroke-width="1.5" stroke-opacity="0.9"/>
+            <!-- Small orbiting gems -->
+            <circle cx="182" cy="110" r="4" fill="#e8d5a3" opacity="0.7"/>
+            <circle cx="38" cy="110" r="4" fill="#e8d5a3" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="product-overlay">
+          <button class="add-to-cart" onclick="addToCart('Celestial Orbit', '18K Gold · Diamond', '2,840', this)">Add to Bag — $2,840</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Celestial Orbit</div>
+        <div class="product-meta">
+          <span class="product-material">18K Gold · Diamond</span>
+          <span class="product-price">$2,840</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="product-card reveal" data-name="Lunar Crescent" data-material="Sterling Silver" data-price="680">
+      <div class="product-img">
+        <div class="pendant-art">
+          <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="70" cy="70" r="60" fill="rgba(201,169,110,0.06)"/>
+            <!-- Crescent moon -->
+            <path d="M 85,38 A 38,38 0 1 1 85,102 A 26,26 0 1 0 85,38 Z" fill="none" stroke="#c9a96e" stroke-width="2" stroke-opacity="0.85"/>
+            <!-- Stars -->
+            <circle cx="98" cy="55" r="2" fill="#e8d5a3" opacity="0.8"/>
+            <circle cx="105" cy="72" r="1.5" fill="#e8d5a3" opacity="0.6"/>
+            <circle cx="95" cy="88" r="2.5" fill="#e8d5a3" opacity="0.9"/>
+          </svg>
+        </div>
+        <div class="product-overlay">
+          <button class="add-to-cart" onclick="addToCart('Lunar Crescent', 'Sterling Silver', '680', this)">Add to Bag — $680</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Lunar Crescent</div>
+        <div class="product-meta">
+          <span class="product-material">Sterling Silver</span>
+          <span class="product-price">$680</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="product-card reveal" data-name="Sacred Geometry" data-material="14K Gold" data-price="1,250">
+      <div class="product-img">
+        <div class="pendant-art">
+          <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="70" cy="70" r="60" fill="rgba(201,169,110,0.06)"/>
+            <!-- Flower of Life base -->
+            <circle cx="70" cy="70" r="42" fill="none" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.35"/>
+            <!-- Inner hexagon -->
+            <polygon points="70,40 96.4,55 96.4,85 70,100 43.6,85 43.6,55" fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-opacity="0.85"/>
+            <!-- Star of david inner -->
+            <polygon points="70,48 88,79 52,79" fill="none" stroke="#e8d5a3" stroke-width="1" stroke-opacity="0.7"/>
+            <polygon points="70,92 52,61 88,61" fill="none" stroke="#e8d5a3" stroke-width="1" stroke-opacity="0.7"/>
+            <circle cx="70" cy="70" r="7" fill="#c9a96e" opacity="0.6"/>
+          </svg>
+        </div>
+        <div class="product-overlay">
+          <button class="add-to-cart" onclick="addToCart('Sacred Geometry', '14K Gold', '1,250', this)">Add to Bag — $1,250</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Sacred Geometry</div>
+        <div class="product-meta">
+          <span class="product-material">14K Gold</span>
+          <span class="product-price">$1,250</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product 4 -->
+    <div class="product-card reveal" data-name="Serpent Eye" data-material="18K Gold · Emerald" data-price="3,400">
+      <div class="product-badge">Bestseller</div>
+      <div class="product-img">
+        <div class="pendant-art">
+          <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="70" cy="70" r="60" fill="rgba(201,169,110,0.06)"/>
+            <!-- Eye of horus / eye shape -->
+            <path d="M 28,70 Q 70,28 112,70 Q 70,112 28,70 Z" fill="none" stroke="#c9a96e" stroke-width="2" stroke-opacity="0.8"/>
+            <!-- Iris -->
+            <circle cx="70" cy="70" r="22" fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-opacity="0.7"/>
+            <!-- Pupil with gem color -->
+            <circle cx="70" cy="70" r="12" fill="rgba(80,160,100,0.25)" stroke="#c9a96e" stroke-width="1.5"/>
+            <circle cx="70" cy="70" r="5" fill="rgba(80,160,100,0.7)"/>
+            <!-- Lash details -->
+            <line x1="70" y1="42" x2="70" y2="50" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.6"/>
+            <line x1="50" y1="48" x2="54" y2="55" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.6"/>
+            <line x1="90" y1="48" x2="86" y2="55" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.6"/>
+          </svg>
+        </div>
+        <div class="product-overlay">
+          <button class="add-to-cart" onclick="addToCart('Serpent Eye', '18K Gold · Emerald', '3,400', this)">Add to Bag — $3,400</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Serpent Eye</div>
+        <div class="product-meta">
+          <span class="product-material">18K Gold · Emerald</span>
+          <span class="product-price">$3,400</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product 5 -->
+    <div class="product-card reveal" data-name="Infinity Knot" data-material="Platinum" data-price="4,200">
+      <div class="product-img">
+        <div class="pendant-art">
+          <svg width="140" height="140" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="70" cy="70" r="60" fill="rgba(201,169,110,0.06)"/>
+            <!-- Infinity symbol -->
+            <path d="M 40,70 C 40,50 55,42 70,70 C 85,98 100,90 100,70 C 100,50 85,42 70,70 C 55,98 40,90 40,70 Z" fill="none" stroke="#c9a96e" stroke-width="2.5" stroke-opacity="0.9"/>
+            <!-- Nodes -->
+            <circle cx="40" cy="70" r="5" fill="#c9a96e" opacity="0.7"/>
+            <circle cx="100" cy="70" r="5" fill="#c9a96e" opacity="0.7"/>
+            <circle cx="70" cy="70" r="3" fill="#e8d5a3" opacity="0.9"/>
+          </svg>
+        </div>
+        <div class="product-overlay">
+          <button class="add-to-cart" onclick="addToCart('Infinity Knot', 'Platinum', '4,200', this)">Add to Bag — $4,200</button>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Infinity Knot</div>
+        <div class="product-meta">
+          <span class="product-material">Platinum</span>
+          <span class="product-price">$4,200</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Materials strip -->
+<section class="materials" id="materials">
+  <div class="materials-inner">
+    <div class="material-item reveal">
+      <div class="material-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="24" r="18" stroke="#c9a96e" stroke-width="1.5" stroke-opacity="0.6"/>
+          <polygon points="24,8 28,20 40,20 31,27.6 34,40 24,32 14,40 17,27.6 8,20 20,20" stroke="#c9a96e" stroke-width="1.5" fill="none" stroke-opacity="0.9"/>
+        </svg>
+      </div>
+      <div class="material-name">18K Gold</div>
+      <div class="material-desc">Sourced from certified ethical refineries. Warm, enduring, timeless.</div>
+    </div>
+    <div class="material-item reveal">
+      <div class="material-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="24,6 42,18 42,30 24,42 6,30 6,18" stroke="#a8b8c8" stroke-width="1.5" stroke-opacity="0.8" fill="none"/>
+          <polygon points="24,14 34,20 34,32 24,38 14,32 14,20" stroke="#a8b8c8" stroke-width="1" stroke-opacity="0.5" fill="none"/>
+          <circle cx="24" cy="24" r="4" fill="#a8b8c8" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="material-name">Platinum</div>
+      <div class="material-desc">The rarest precious metal. Naturally white, hypoallergenic, eternal.</div>
+    </div>
+    <div class="material-item reveal">
+      <div class="material-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="24" cy="24" r="16" stroke="#d0d8e0" stroke-width="1.5" stroke-opacity="0.7" fill="none"/>
+          <path d="M 16,24 L 24,12 L 32,24 L 24,36 Z" stroke="#d0d8e0" stroke-width="1.5" fill="none" stroke-opacity="0.9"/>
+          <path d="M 16,24 L 32,24" stroke="#d0d8e0" stroke-width="0.75" stroke-opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="material-name">Sterling Silver</div>
+      <div class="material-desc">Hand-polished to a mirror finish. Classic craftsmanship at its finest.</div>
+    </div>
+    <div class="material-item reveal">
+      <div class="material-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 24,8 L 40,20 L 36,38 L 12,38 L 8,20 Z" stroke="#7ec8a0" stroke-width="1.5" stroke-opacity="0.8" fill="rgba(126,200,160,0.1)"/>
+          <polygon points="24,14 32,24 24,34 16,24" stroke="#7ec8a0" stroke-width="1" stroke-opacity="0.6" fill="none"/>
+          <circle cx="24" cy="24" r="4" fill="#7ec8a0" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="material-name">Gemstones</div>
+      <div class="material-desc">Diamonds, emeralds, sapphires — conflict-free and GIA certified.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Story -->
+<section class="story" id="story">
+  <div class="story-visual reveal">
+    <div class="story-img-main">
+      <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="sg1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#c9a96e" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#c9a96e" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="100" cy="100" r="90" fill="url(#sg1)"/>
+        <!-- Artisan hands sketching -->
+        <circle cx="100" cy="100" r="60" fill="none" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="3 6"/>
+        <circle cx="100" cy="100" r="40" fill="none" stroke="#c9a96e" stroke-width="0.75" stroke-opacity="0.2"/>
+        <!-- Central ornate pendant design -->
+        <polygon points="100,48 114,80 148,80 121,100 132,132 100,112 68,132 79,100 52,80 86,80" fill="none" stroke="#c9a96e" stroke-width="2" stroke-opacity="0.85"/>
+        <circle cx="100" cy="90" r="14" fill="none" stroke="#e8d5a3" stroke-width="1.5" stroke-opacity="0.7"/>
+        <circle cx="100" cy="90" r="6" fill="#c9a96e" opacity="0.7"/>
+        <!-- Ruler/craft lines -->
+        <line x1="20" y1="100" x2="52" y2="100" stroke="#c9a96e" stroke-width="0.5" stroke-opacity="0.3"/>
+        <line x1="148" y1="100" x2="180" y2="100" stroke="#c9a96e" stroke-width="0.5" stroke-opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="story-img-accent">
+      <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <text x="40" y="52" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="28" fill="#c9a96e" opacity="0.5" font-style="italic">Au</text>
+        <circle cx="40" cy="40" r="35" fill="none" stroke="#c9a96e" stroke-width="0.75" stroke-opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="story-number">XII</div>
+  </div>
+
+  <div class="story-text reveal">
+    <div class="section-label">Our Atelier</div>
+    <h2 class="story-title">Twelve Years of <em>Pure Craft</em></h2>
+    <p class="story-body">Every piece begins as a sketch — then wax, then metal. Our goldsmiths work from a small studio where ancient lost-wax casting techniques meet contemporary vision. No two pendants are identical. Each carries the fingerprints of its maker.</p>
+    <p class="story-body">We believe jewellery should hold meaning. That's why we offer complimentary engraving and bespoke commissions, so your pendant becomes a true heirloom.</p>
+    <a href="#" class="btn-primary">Our Story <span class="btn-arrow">→</span></a>
+
+    <div class="story-stats">
+      <div>
+        <div class="stat-number">847</div>
+        <div class="stat-label">Unique Designs</div>
+      </div>
+      <div>
+        <div class="stat-number">12</div>
+        <div class="stat-label">Master Craftspeople</div>
+      </div>
+      <div>
+        <div class="stat-number">40+</div>
+        <div class="stat-label">Countries Shipped</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonial -->
+<section class="testimonial reveal">
+  <blockquote class="testimonial-quote">
+    "The Celestial Orbit pendant arrived and I wept. Nothing I have ever worn has felt so precisely made for me — as if Aurum knew the shape of my soul."
+  </blockquote>
+  <div class="testimonial-author">— Nadia S. · Paris, France</div>
+  <div class="testimonial-dots">
+    <button class="t-dot active"></button>
+    <button class="t-dot"></button>
+    <button class="t-dot"></button>
+  </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter" id="newsletter">
+  <div class="reveal">
+    <div class="section-label">Stay Close</div>
+    <h2 class="newsletter-title">First to <em>Discover</em></h2>
+    <p class="newsletter-sub">New pieces, limited editions, and the occasional glimpse inside the atelier — delivered quietly to your inbox.</p>
+  </div>
+  <div class="newsletter-form reveal">
+    <input type="text" placeholder="Your name" class="newsletter-input"/>
+    <input type="email" placeholder="Email address" class="newsletter-input"/>
+    <button class="btn-primary" style="width:fit-content" onclick="handleSubscribe(this)">
+      Subscribe <span class="btn-arrow">→</span>
+    </button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-brand">
+    <a href="#" class="logo">AUR<span>UM</span></a>
+    <p class="footer-tagline">Artisan pendant jewellery, made by hand in our London atelier since 2012.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Shop</h4>
+    <ul class="footer-links">
+      <li><a href="#">New Arrivals</a></li>
+      <li><a href="#">Gold Collection</a></li>
+      <li><a href="#">Silver Collection</a></li>
+      <li><a href="#">Bespoke</a></li>
+      <li><a href="#">Gift Cards</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Atelier</h4>
+    <ul class="footer-links">
+      <li><a href="#">Our Story</a></li>
+      <li><a href="#">Craftsmanship</a></li>
+      <li><a href="#">Materials</a></li>
+      <li><a href="#">Press</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Care</h4>
+    <ul class="footer-links">
+      <li><a href="#">Shipping & Returns</a></li>
+      <li><a href="#">Jewellery Care</a></li>
+      <li><a href="#">Engraving Service</a></li>
+      <li><a href="#">Contact Us</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span class="footer-copy">© 2024 Aurum Atelier. All rights reserved.</span>
+  <span class="footer-copy" style="color:rgba(138,125,110,0.4)">Crafted with intention.</span>
+</div>
+
+<!-- Cart Drawer -->
+<div class="overlay-bg" id="overlayBg" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h2 class="cart-title">Your Bag</h2>
+    <button class="cart-close" onclick="toggleCart()">×</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <span class="cart-empty-icon">◇</span>
+      Your bag is empty.<br>Each piece is waiting to find its wearer.
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-price" id="cartTotal">$0</span>
+    </div>
+    <button class="btn-primary" style="width:100%; justify-content:center" onclick="checkout()">
+      Proceed to Checkout <span class="btn-arrow">→</span>
+    </button>
+  </div>
+</div>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  setTimeout(() => {
+    ring.style.left = e.clientX + 'px';
+    ring.style.top = e.clientY + 'px';
+  }, 80);
+});
+document.querySelectorAll('a, button, .product-card').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    ring.style.transform = 'translate(-50%,-50%) scale(1.8)';
+    ring.style.borderColor = 'var(--gold)';
+  });
+  el.addEventListener('mouseleave', () => {
+    ring.style.transform = 'translate(-50%,-50%) scale(1)';
+  });
+});
+
+// Cart
+let cartItems = [];
+function toggleCart() {
+  document.getElementById('cartDrawer').classList.toggle('open');
+  document.getElementById('overlayBg').classList.toggle('active');
+}
+function addToCart(name, material, price, btn) {
+  const existing = cartItems.find(i => i.name === name);
+  if (!existing) cartItems.push({ name, material, price });
+  updateCartUI();
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('overlayBg').classList.add('active');
+
+  // Button feedback
+  const orig = btn.textContent;
+  btn.textContent = '✓ Added';
+  btn.style.background = 'var(--gold-dark)';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 1500);
+}
+function removeFromCart(idx) {
+  cartItems.splice(idx, 1);
+  updateCartUI();
+}
+function updateCartUI() {
+  const container = document.getElementById('cartItems');
+  const footer = document.getElementById('cartFooter');
+  const count = document.getElementById('cartCount');
+  count.textContent = cartItems.length;
+  if (cartItems.length === 0) {
+    container.innerHTML = '<div class="cart-empty"><span class="cart-empty-icon">◇</span>Your bag is empty.<br>Each piece is waiting to find its wearer.</div>';
+    footer.style.display = 'none';
+    return;
+  }
+  footer.style.display = 'block';
+  let total = 0;
+  container.innerHTML = cartItems.map((item, i) => {
+    const p = parseFloat(item.price.replace(',',''));
+    total += p;
+    return `
+    <div class="cart-item">
+      <div class="cart-item-img">
+        <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="#c9a96e" stroke-width="1" stroke-opacity="0.5"/><circle cx="24" cy="24" r="8" fill="#c9a96e" opacity="0.4"/></svg>
+      </div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-sub">${item.material}</div>
+        <div class="cart-item-price">$${item.price}</div>
+      </div>
+      <button class="cart-item-remove" onclick="removeFromCart(${i})">✕</button>
+    </div>`;
+  }).join('');
+  document.getElementById('cartTotal').textContent = '$' + total.toLocaleString();
+}
+function checkout() {
+  alert('Thank you for your order. Our artisans will begin crafting your pieces immediately.');
+  cartItems = [];
+  updateCartUI();
+  toggleCart();
+}
+
+// Reveal on scroll
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+revealEls.forEach(el => observer.observe(el));
+
+// Subscribe
+function handleSubscribe(btn) {
+  btn.innerHTML = '✓ Subscribed';
+  btn.style.borderColor = 'var(--gold-light)';
+  btn.style.color = 'var(--gold-light)';
+}
+
+// Testimonial dots
+document.querySelectorAll('.t-dot').forEach((dot, i) => {
+  dot.addEventListener('click', () => {
+    document.querySelectorAll('.t-dot').forEach(d => d.classList.remove('active'));
+    dot.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
